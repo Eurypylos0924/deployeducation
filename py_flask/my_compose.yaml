@@ -1,0 +1,13 @@
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: py-flask:1.0
+    container_name: py-flask-container
+
+    ports:
+      - "8093:9000"
+
+    restart: unless-stopped

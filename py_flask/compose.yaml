@@ -1,0 +1,9 @@
+services:
+  flask:
+    image: eurypylos/py-flask-app:1.0
+    container_name: my-flask-app
+
+    ports:
+      - "8092:9000"
+
+    restart: unless-stopped

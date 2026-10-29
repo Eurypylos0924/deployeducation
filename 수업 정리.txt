@@ -1,0 +1,90 @@
+docker pull nginx            # 이미지 받기
+docker run -d -p 8080:80 --name web nginx   # 백그라운드 실행, 포트 매핑
+docker ps                    # 실행 중인 컨테이너 (-a: 전체)
+docker logs web              # 로그 확인
+docker exec -it web bash     # 컨테이너 내부 접속
+docker stop web && docker rm web   # 중지 후 삭제
+docker images                # 이미지 목록
+docker rmi nginx             # 이미지 삭제
+
+docker exec -it myhttpd1 bash
+
+docker : Docker CLI 실행
+    CLI : Command Line Interface 사용자가 키보드로 명령어를 입력하여 윤영체제나 소프트웨어를 제어하는 인터페이스이다.
+exec : 실행 중인 컨테이너 내부에서 새로운 프로세스 실행
+-i : 표준 입력(STDIN) 연결 상태로 유지
+-t : 가상 터미널(tty) 할당
+myhttpd1 : 접속할 컨테이너 이름
+bash : 컨테이너 내부에서 실행할 Bash 쉘
+
+cat -n test.html
+sed -i '11,12d' test.html
+sed -i : Linux에서 파일의 내용을 직접 수정하는 명령어
+sed : Steam Editor의 약자로, 텍스트 검색 치환 삭제 추가 등의 작업 수행
+-i : in-place 옵션으로 수정결과를 화면에 출력하는 대신 원본 파일에 반영
+'11,12d' : 11,12번째 라인 삭제
+test.html : 편집할 파일명
+
+전체 배포 순서
+Dockerfile -> docker build -> docker tag -> docker login -> docker push -> Docekr Hub -> docker pull -> docker create -> docker start
+
+Dockerfile
+docker build => docker build -t py-flask-app:1.0 .
+docker tag => docker tag py-flask-app:1.0           계정명/py-flask-app:1.0
+docker login
+docker push => docker push 계정명/py-flask-app:1.0
+Docker Hub
+docker pull => docker pull 계정명/py-flask-app:1.0
+docker create => docker create --name py-flask-app -p 8091:9000 계정명/py-flask-app:1.0
+          ::::::: docker ps -a   #생성된걸(status:Created) 확인하는 법,   실행 X 
+          ::::::: docker container ls = docker ps => 실행된(status: UP) container 검색됨
+docker start => docker start py-flask-app
+
+
+docker run = docker pull + docker create + docker start
+docker run => docker run -d -it --name py-flask-app -p 8091:9000 계정명/py-flask-app:1.0
+
+=====================================
+docker compose
+
+compose.yaml
+
+services:
+  flask:
+    image: 계정명/py-flask-app:1.0
+    container_name: my-flask-app
+
+    ports:
+      - "8092:9000"
+
+    restart: unless-stopped
+=====================================
+BUILD 생성을 한 후 컨테이너 생성
+
+my_compose.yaml
+# docker compose -f my_compose.yaml up -d
+
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: py-flask:1.0
+    container_name: py-flask-container
+
+    ports:
+      - "8093:9000"
+
+    restart: unless-stopped
+
+
+
+
+
+
+
+
+
+
+
